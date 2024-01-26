@@ -164,6 +164,7 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+    width: 100%;
   }
 
   hr {
@@ -175,5 +176,21 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
+  }
+
+  @media (max-width: 600px) {
+    section {
+      flex-direction: column;
+      min-width: 0;
+      width: 90%;
+    }
+
+    #timer-label {
+      font-size: 3.5rem;
+    }
+
+    #time-left {
+      font-size: 6.5rem;
+    }
   }
 </style>

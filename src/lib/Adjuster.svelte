@@ -91,6 +91,7 @@
   .label {
     font-family: DS-Digital;
     font-size: 2.5rem;
+    white-space: nowrap;
   }
 
   .length-container {
@@ -109,5 +110,11 @@
     flex-direction: column;
     border-radius: 5px;
     border: 2px solid black;
+  }
+
+  @media (max-width: 600px) {
+    .label {
+      font-size: 2rem;
+    }
   }
 </style>

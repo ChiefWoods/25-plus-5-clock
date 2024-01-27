@@ -13,14 +13,21 @@
   let sessionMinute = writable(25);
   let isBreak = writable(false);
   let isPaused = writable(true);
-
-  let timeLeft: number = $sessionMinute * 60;
-  let timeInSecs: string;
+  let title = writable("25 + 5 Clock");
+  let isReset = true;
   let interval: number;
   let audio: HTMLAudioElement;
 
-  $: timeLeft = $sessionMinute * 60;
-  $: timeInSecs = formatTime(timeLeft);
+  $: timeInSecs = $sessionMinute * 60;
+  $: timeLeft = formatTime(timeInSecs);
+
+  $: if (isReset) {
+    $title = "25 + 5 Clock";
+  } else if ($isPaused) {
+    $title = `${timeLeft} - ${$isBreak ? "Break" : "Session"} Paused`;
+  } else {
+    $title = `${timeLeft} - ${$isBreak ? "Break Time!" : "Session Up"}`;
+  }
 
   setContext("isPaused", isPaused);
 
@@ -37,23 +44,25 @@
 
   function playPauseTimer() {
     $isPaused = !$isPaused;
+    isReset = false;
 
     if ($isPaused) {
       clearInterval(interval);
       audio.pause();
     } else {
       interval = setInterval(() => {
-        if (!$isBreak && timeLeft < 1) {
+        if (!$isBreak && timeInSecs < 1) {
+          // end of session
           audio.play();
           $isBreak = !$isBreak;
-          timeLeft = $breakMinute * 60;
-        } else if ($isBreak && timeLeft < 1) {
+          timeInSecs = $breakMinute * 60;
+        } else if ($isBreak && timeInSecs < 1) {
+          // end of break
           audio.pause();
-          audio.currentTime = 0;
           $isBreak = !$isBreak;
-          timeLeft = $sessionMinute * 60;
+          timeInSecs = $sessionMinute * 60;
         } else {
-          timeLeft--;
+          timeInSecs--;
         }
       }, 1000);
     }
@@ -64,7 +73,8 @@
     $sessionMinute = 25;
     $isBreak = false;
     $isPaused = true;
-    timeLeft = $sessionMinute * 60;
+    isReset = true;
+    timeInSecs = $sessionMinute * 60;
     clearInterval(interval);
     audio.pause();
     audio.currentTime = 0;
@@ -77,15 +87,12 @@
       <p id="timer-label" class={$isBreak ? "break" : ""}>
         {$isBreak ? "Break" : "Session"}
       </p>
-      <p id="time-left" class={$isBreak ? "break" : ""}>{timeInSecs}</p>
+      <p id="time-left" class={$isBreak ? "break" : ""}>{timeLeft}</p>
     </div>
     <div id="adjuster-container">
       <Adjuster type="break" minute={breakMinute} />
       <hr />
-      <Adjuster
-        type="session"
-        minute={sessionMinute}
-      />
+      <Adjuster type="session" minute={sessionMinute} />
       <hr />
       <div id="flow">
         <Button
@@ -101,6 +108,9 @@
   </section>
 </main>
 <Footer />
+<svelte:head>
+  <title>{$title}</title>
+</svelte:head>
 
 <style>
   @font-face {

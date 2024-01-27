@@ -50,6 +50,10 @@
       clearInterval(interval);
       audio.pause();
     } else {
+      if ($isBreak) {
+        audio.play();
+      }
+
       interval = setInterval(() => {
         if (!$isBreak && timeInSecs < 1) {
           // end of session

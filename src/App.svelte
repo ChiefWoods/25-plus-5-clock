@@ -19,6 +19,7 @@
   let interval: number;
   let audio: HTMLAudioElement;
 
+  $: timeLeft = $sessionMinute * 60;
   $: timeInSecs = formatTime(timeLeft);
 
   setContext("isPaused", isPaused);
@@ -32,12 +33,6 @@
     }`;
 
     return time;
-  }
-
-  function handleAdjusterClick() {
-    if ($isPaused) {
-      timeLeft = $sessionMinute * 60;
-    }
   }
 
   function playPauseTimer() {
@@ -90,7 +85,6 @@
       <Adjuster
         type="session"
         minute={sessionMinute}
-        on:click={handleAdjusterClick}
       />
       <hr />
       <div id="flow">
@@ -137,18 +131,19 @@
     align-items: center;
     justify-content: space-between;
     gap: 30px;
-    min-width: 550px;
+    width: 600px;
   }
 
   #timer-container {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    text-align: center;
   }
 
   #timer-label {
     font-family: DS-Digital;
     font-size: 4rem;
-    text-align: center;
   }
 
   #time-left {
@@ -164,7 +159,6 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 100%;
   }
 
   hr {
@@ -181,16 +175,15 @@
   @media (max-width: 600px) {
     section {
       flex-direction: column;
-      min-width: 0;
       width: 90%;
     }
 
     #timer-label {
-      font-size: 3.5rem;
+      font-size: 3rem;
     }
 
     #time-left {
-      font-size: 6.5rem;
+      font-size: 5.5rem;
     }
   }
 </style>

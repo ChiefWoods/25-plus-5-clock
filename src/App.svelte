@@ -7,7 +7,7 @@
   import Button from "./lib/Button.svelte";
   import Footer from "./lib/Footer.svelte";
   import { writable } from "svelte/store";
-  import { setContext } from "svelte";
+  import { setContext, onMount } from "svelte";
 
   let breakMinute = writable(5);
   let sessionMinute = writable(25);
@@ -17,8 +17,14 @@
   let isReset = true;
   let interval: number;
   let audio: HTMLAudioElement;
+  let timeInSecs: number;
 
-  $: timeInSecs = $sessionMinute * 60;
+  $: if (!($isBreak)) {
+    timeInSecs = $sessionMinute * 60;
+  } else {
+    timeInSecs = $breakMinute * 60;
+  }
+
   $: timeLeft = formatTime(timeInSecs);
 
   $: if (isReset) {

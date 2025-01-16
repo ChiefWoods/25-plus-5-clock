@@ -1,80 +1,47 @@
 <script lang="ts">
   import increment from "../assets/icons/chevron-up.svg";
   import decrement from "../assets/icons/chevron-down.svg";
-  import Button from "./Button.svelte";
-  import { createEventDispatcher, getContext } from "svelte";
-  import type { Writable } from "svelte/store";
+  import MinuteButton from "./MinuteButton.svelte";
 
-  export let type: string;
-  export let minute: Writable<number>;
-
-  const dispatch = createEventDispatcher();
-
-  const isPaused: Writable<boolean> = getContext("isPaused");
-
-  let capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
-  let isMouseDown: Boolean = false;
-  let interval: number;
-
-  function handleIncrementClick() {
-    incrementMinute();
-    dispatch("click");
-  }
-
-  function handleDecrementClick() {
-    decrementMinute();
-    dispatch("click");
-  }
+  let {
+    type,
+    isPaused,
+    minute = $bindable(),
+  }: {
+    type: string;
+    isPaused: boolean;
+    minute: number;
+  } = $props();
 
   function incrementMinute() {
-    if ($isPaused && $minute < 60) {
-      $minute++;
+    if (isPaused && minute < 60) {
+      minute++;
     }
   }
 
   function decrementMinute() {
-    if ($isPaused && $minute > 1) {
-      $minute--;
+    if (isPaused && minute > 1) {
+      minute--;
     }
-  }
-
-  function startAuto(autoFunc: Function) {
-    isMouseDown = true;
-
-    setTimeout(() => {
-      if (isMouseDown) {
-        clearInterval(interval);
-        interval = setInterval(autoFunc, 100);
-      }
-    }, 1000);
-  }
-
-  function stopAuto() {
-    isMouseDown = false;
-    clearInterval(interval);
   }
 </script>
 
 <div class="adjuster">
-  <p id="{type}-label" class="label">{capitalizedType} Length</p>
+  <p id="{type}-label" class="label">{type.toUpperCase()} LENGTH</p>
   <div class="length-container">
-    <p id="{type}-length" class="length">{$minute}</p>
+    <p id="{type}-length" class="length">{minute}</p>
     <div class="btn-container">
-      <Button
+      <MinuteButton
         id="{type}-increment"
         src={increment}
         alt="Increment"
-        on:click={handleIncrementClick}
-        on:mousedown={() => startAuto(incrementMinute)}
-        on:mouseup={stopAuto}
+        minuteFunc={incrementMinute}
       />
-      <Button
+      <MinuteButton
         id="{type}-decrement"
         src={decrement}
         alt="Decrement"
-        on:click={handleDecrementClick}
-        on:mousedown={() => startAuto(decrementMinute)}
-        on:mouseup={stopAuto}
+        minuteFunc={decrementMinute}
       />
     </div>
   </div>

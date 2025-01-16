@@ -1,19 +1,22 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-
-  const dispatch = createEventDispatcher();
-
-  export let id: string;
-  export let src: string;
-  export let alt: string;
+  let {
+    id,
+    src,
+    alt,
+    onclick,
+    onmousedown,
+    onmouseup,
+  }: {
+    id: string;
+    src: string;
+    alt: string;
+    onclick: () => void;
+    onmousedown?: () => void;
+    onmouseup?: () => void;
+  } = $props();
 </script>
 
-<button
-  {id}
-  on:click={() => dispatch("click")}
-  on:mousedown={() => dispatch("mousedown")}
-  on:mouseup={() => dispatch("mouseup")}
->
+<button {id} {onclick} {onmousedown} {onmouseup}>
   <img {src} {alt} />
 </button>
 
@@ -22,10 +25,10 @@
     background: none;
     border: none;
     cursor: pointer;
-  }
 
-  button:hover {
-    scale: 1.2;
+    &:hover {
+      scale: 1.2;
+    }
   }
 
   img {
